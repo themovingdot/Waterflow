@@ -45,8 +45,11 @@ export const convertToReactFlow = (flowNodes: FlowNode[]) => {
         id: `${flowNode.id}-${targetId}`,
         source: flowNode.id,
         target: targetId,
-        type: 'smoothstep',
-        animated: flowNode.metadata.vitality === 'high',
+        type: 'flowEdge',
+        data: {
+          animated: true,
+          vitality: flowNode.metadata.vitality,
+        },
         style: {
           stroke: getEdgeColor(flowNode.metadata.vitality),
           strokeWidth: 2,
@@ -60,8 +63,11 @@ export const convertToReactFlow = (flowNodes: FlowNode[]) => {
         id: `${flowNode.id}-cross-${targetId}`,
         source: flowNode.id,
         target: targetId,
-        type: 'straight',
-        animated: false,
+        type: 'flowEdge',
+        data: {
+          animated: false,
+          vitality: 'low',
+        },
         style: {
           stroke: '#d0d0d0',
           strokeWidth: 1,

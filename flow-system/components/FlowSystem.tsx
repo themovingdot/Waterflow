@@ -14,11 +14,16 @@ import ReactFlow, {
 import 'reactflow/dist/style.css';
 
 import FlowNode from './FlowNode';
+import FlowEdge from './FlowEdge';
 import { mockNodes, getNodeById } from '@/lib/mockData';
 import { convertToReactFlow } from '@/lib/flowUtils';
 
 const nodeTypes = {
   flowNode: FlowNode,
+};
+
+const edgeTypes = {
+  flowEdge: FlowEdge,
 };
 
 export default function FlowSystem() {
@@ -153,6 +158,7 @@ export default function FlowSystem() {
         onEdgesChange={onEdgesChange}
         onNodeClick={onNodeClick}
         nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
         fitView
         minZoom={0.5}
         maxZoom={1.5}
