@@ -33,7 +33,14 @@ const FlowEdge: FC<EdgeProps> = ({
 
   return (
     <>
-      <BaseEdge path={edgePath} markerEnd={markerEnd} style={style} />
+      <BaseEdge
+        path={edgePath}
+        markerEnd={markerEnd}
+        style={{
+          ...style,
+          filter: 'blur(0.5px)',  // 水道模糊效果
+        }}
+      />
 
       {/* 流动粒子 */}
       {isAnimated && (
@@ -43,6 +50,7 @@ const FlowEdge: FC<EdgeProps> = ({
               key={`${id}-particle-${i}`}
               r="3"
               fill={style.stroke as string || '#4a90e2'}
+              filter="blur(1px) drop-shadow(0 0 4px rgba(74, 144, 226, 0.6))"
               initial={{ opacity: 0 }}
               animate={{
                 opacity: [0, 1, 1, 0],

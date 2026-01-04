@@ -25,11 +25,23 @@ body {
 /* React Flow 自定义样式 */
 .react-flow {
   background:
-    radial-gradient(circle at 15% 30%, rgba(74, 144, 226, 0.02) 0%, transparent 40%),
-    radial-gradient(circle at 85% 70%, rgba(107, 163, 216, 0.03) 0%, transparent 50%),
-    radial-gradient(circle at 50% 50%, rgba(160, 196, 232, 0.01) 0%, transparent 60%),
+    radial-gradient(circle at 15% 30%, rgba(74, 144, 226, 0.04) 0%, transparent 40%),
+    radial-gradient(circle at 85% 70%, rgba(107, 163, 216, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(160, 196, 232, 0.03) 0%, transparent 60%),
     var(--flow-bg);
   background-attachment: fixed;
+  animation: waterBreath 8s ease-in-out infinite;
+}
+
+@keyframes waterBreath {
+  0%, 100% {
+    background-size: 100% 100%;
+    opacity: 1;
+  }
+  50% {
+    background-size: 105% 105%;
+    opacity: 0.98;
+  }
 }
 
 .react-flow__node {

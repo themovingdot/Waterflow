@@ -129,60 +129,104 @@ export const getNodeSize = (layer: number, vitality: 'high' | 'medium' | 'low'):
   return (baseSizes[layer] || 50) * vitalityMultiplier;
 };
 
-// 获取节点的样式（基于类型和活力）
+// 获取节点的样式（水滴晕开效果）
 export const getNodeStyle = (flowNode: FlowNode) => {
   const size = getNodeSize(flowNode.layer, flowNode.metadata.vitality);
 
+  // 基础样式 - 去掉硬边界
   const baseStyle = {
     width: `${size}px`,
     height: `${size}px`,
-    borderRadius: '50%',  // 圆形！
-    border: '2px solid',
-    background: '#ffffff',
+    borderRadius: '50%',
+    border: 'none',  // 去掉硬边界！
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     textAlign: 'center' as const,
     padding: '0',
-    boxShadow: '0 4px 12px rgba(74, 144, 226, 0.15)',
+    position: 'relative' as const,
+    // 水滴晕开效果 - 多层阴影模拟墨滴扩散
+    filter: 'blur(0.8px)',  // 增加模糊度，更像墨滴晕开
   };
 
-  // 根据类型调整样式
+  // 根据类型调整
   switch (flowNode.type) {
     case 'source':
       return {
         ...baseStyle,
-        borderColor: '#1e3a5f',
-        background: 'radial-gradient(circle, #f0f4f8 0%, #e8eff5 100%)',
+        background: `
+          radial-gradient(circle at 40% 40%,
+            rgba(240, 244, 248, 1) 0%,
+            rgba(232, 239, 245, 0.95) 40%,
+            rgba(200, 220, 240, 0.6) 70%,
+            rgba(160, 196, 232, 0.3) 85%,
+            rgba(74, 144, 226, 0.1) 100%
+          )
+        `,
         fontSize: '16px',
         fontWeight: 600,
-        boxShadow: '0 6px 20px rgba(30, 58, 95, 0.2)',
+        boxShadow: `
+          0 0 30px rgba(30, 58, 95, 0.25),
+          0 0 60px rgba(74, 144, 226, 0.15),
+          inset 0 0 40px rgba(255, 255, 255, 0.4)
+        `,
       };
     case 'main':
       return {
         ...baseStyle,
-        borderColor: '#4a90e2',
-        background: 'radial-gradient(circle, #ffffff 0%, #f5f9fc 100%)',
+        background: `
+          radial-gradient(circle at 40% 40%,
+            rgba(255, 255, 255, 1) 0%,
+            rgba(245, 249, 252, 0.95) 50%,
+            rgba(220, 235, 245, 0.7) 75%,
+            rgba(74, 144, 226, 0.2) 95%,
+            rgba(74, 144, 226, 0.05) 100%
+          )
+        `,
         fontSize: '14px',
         fontWeight: 500,
-        boxShadow: '0 5px 16px rgba(74, 144, 226, 0.18)',
+        boxShadow: `
+          0 0 25px rgba(74, 144, 226, 0.2),
+          0 0 50px rgba(74, 144, 226, 0.1),
+          inset 0 0 30px rgba(255, 255, 255, 0.5)
+        `,
       };
     case 'mantra':
     case 'principle':
       return {
         ...baseStyle,
-        borderColor: '#6ba3d8',
-        background: 'radial-gradient(circle, #ffffff 0%, #f8fbfd 100%)',
+        background: `
+          radial-gradient(circle at 40% 40%,
+            rgba(255, 255, 255, 1) 0%,
+            rgba(248, 251, 253, 0.9) 60%,
+            rgba(230, 240, 250, 0.6) 85%,
+            rgba(107, 163, 216, 0.15) 100%
+          )
+        `,
         fontSize: '13px',
-        boxShadow: '0 4px 14px rgba(107, 163, 216, 0.15)',
+        boxShadow: `
+          0 0 20px rgba(107, 163, 216, 0.18),
+          0 0 40px rgba(107, 163, 216, 0.08),
+          inset 0 0 25px rgba(255, 255, 255, 0.6)
+        `,
       };
     default:
       return {
         ...baseStyle,
-        borderColor: '#a0c4e8',
-        background: 'radial-gradient(circle, #ffffff 0%, #fafcfd 100%)',
+        background: `
+          radial-gradient(circle at 40% 40%,
+            rgba(255, 255, 255, 1) 0%,
+            rgba(250, 252, 253, 0.85) 70%,
+            rgba(240, 245, 250, 0.5) 90%,
+            rgba(160, 196, 232, 0.1) 100%
+          )
+        `,
         fontSize: '12px',
-        boxShadow: '0 3px 10px rgba(160, 196, 232, 0.12)',
+        boxShadow: `
+          0 0 15px rgba(160, 196, 232, 0.15),
+          0 0 30px rgba(160, 196, 232, 0.06),
+          inset 0 0 20px rgba(255, 255, 255, 0.7)
+        `,
       };
   }
 };
