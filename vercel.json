@@ -1,7 +1,0 @@
-{
-  "buildCommand": "cd flow-system && npm run build",
-  "devCommand": "cd flow-system && npm run dev",
-  "installCommand": "cd flow-system && npm install",
-  "framework": "nextjs",
-  "outputDirectory": "flow-system/.next"
-}
