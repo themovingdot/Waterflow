@@ -45,7 +45,10 @@ const FlowNode = memo(({ data, selected }: FlowNodeProps) => {
 
       {/* 节点本体 */}
       <motion.div
-        style={style}
+        style={{
+          ...style,
+          background: 'transparent', // 背景由单独图层处理
+        }}
         className={`flow-node relative overflow-visible ${selected ? 'ring-2 ring-flow-secondary' : ''}`}
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{
@@ -71,13 +74,22 @@ const FlowNode = memo(({ data, selected }: FlowNodeProps) => {
           transition: { duration: 0.2 },
         }}
       >
+      {/* 水墨晕染背景层 - 模糊效果只作用于背景 */}
+      <div
+        className="absolute inset-0 rounded-full pointer-events-none"
+        style={{
+          background: style.background,
+          filter: 'blur(1.2px) contrast(0.95)',
+          zIndex: 0,
+        }}
+      />
       {/* 上游连接点 */}
       {hasUpstream && (
         <Handle type="target" position={Position.Top} />
       )}
 
-      {/* 节点内容 */}
-      <div className="flow-node-content">
+      {/* 节点内容 - 清晰文字层 */}
+      <div className="flow-node-content relative" style={{ zIndex: 1 }}>
         {/* 主要文字 */}
         <div className="font-semibold text-flow-primary">
           {flowNode.content.primary}

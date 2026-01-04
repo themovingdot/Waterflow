@@ -133,7 +133,7 @@ export const getNodeSize = (layer: number, vitality: 'high' | 'medium' | 'low'):
 export const getNodeStyle = (flowNode: FlowNode) => {
   const size = getNodeSize(flowNode.layer, flowNode.metadata.vitality);
 
-  // 基础样式 - 水墨画风格
+  // 基础样式 - 水墨画风格（背景模糊由组件层处理，保持文字清晰）
   const baseStyle = {
     width: `${size}px`,
     height: `${size}px`,
@@ -145,9 +145,6 @@ export const getNodeStyle = (flowNode: FlowNode) => {
     textAlign: 'center' as const,
     padding: '0',
     position: 'relative' as const,
-    // 水墨晕染效果 - 更强的模糊和纹理
-    filter: 'blur(1.2px) contrast(0.95)',
-    backdropFilter: 'blur(2px)',
   };
 
   // 根据类型调整
