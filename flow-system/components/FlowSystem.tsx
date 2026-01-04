@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useState, useEffect } from 'react';
+import { useCallback, useState, useEffect, useMemo, useRef } from 'react';
 import ReactFlow, {
   Background,
   Controls,
@@ -36,26 +36,30 @@ export default function FlowSystem() {
 
   const { fitView, setCenter } = useReactFlow();
 
+  // 使用 ref 保持 navigateToNode 引用稳定
+  const navigateToNodeRef = useRef<((nodeId: string) => void) | null>(null);
+
   // 导航到指定节点
   const navigateToNode = useCallback((nodeId: string) => {
-    const node = nodes.find(n => n.id === nodeId);
-    if (!node) return;
-
     // 展开目标节点
-    setNodes((nds) =>
-      nds.map((n) => ({
+    setNodes((nds) => {
+      const node = nds.find(n => n.id === nodeId);
+      if (!node) return nds;
+
+      // 居中显示节点
+      setCenter(node.position.x, node.position.y, {
+        zoom: 1,
+        duration: 800,
+      });
+
+      return nds.map((n) => ({
         ...n,
         data: {
           ...n.data,
           isExpanded: n.id === nodeId,
+          onNavigate: navigateToNodeRef.current || undefined,
         },
-      }))
-    );
-
-    // 居中显示节点
-    setCenter(node.position.x, node.position.y, {
-      zoom: 1,
-      duration: 800,
+      }));
     });
 
     // 更新选中状态
@@ -63,7 +67,25 @@ export default function FlowSystem() {
 
     // 更新导航路径
     setNavigationPath(prev => [...prev, nodeId]);
-  }, [nodes, setNodes, setCenter]);
+  }, [setNodes, setCenter]);
+
+  // 更新 ref
+  navigateToNodeRef.current = navigateToNode;
+
+  // 初始化时设置 onNavigate（只运行一次）
+  useEffect(() => {
+    if (navigateToNodeRef.current) {
+      setNodes((nds) =>
+        nds.map((n) => ({
+          ...n,
+          data: {
+            ...n.data,
+            onNavigate: navigateToNodeRef.current!,
+          },
+        }))
+      );
+    }
+  }, []); // 空依赖数组，只运行一次
 
   // 节点点击处理 - 展开/收起
   const onNodeClick: NodeMouseHandler = useCallback((event, node: Node) => {
@@ -75,7 +97,6 @@ export default function FlowSystem() {
             data: {
               ...n.data,
               isExpanded: !n.data.isExpanded,
-              onNavigate: navigateToNode,
             },
           };
         }
@@ -83,7 +104,7 @@ export default function FlowSystem() {
       })
     );
     setSelectedNode(node.id);
-  }, [setNodes, navigateToNode]);
+  }, [setNodes]);
 
   // 键盘快捷键
   useEffect(() => {
@@ -135,19 +156,6 @@ export default function FlowSystem() {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [selectedNode, navigateToNode, setNodes]);
-
-  // 初始化节点数据（添加 onNavigate 回调）
-  useEffect(() => {
-    setNodes((nds) =>
-      nds.map((n) => ({
-        ...n,
-        data: {
-          ...n.data,
-          onNavigate: navigateToNode,
-        },
-      }))
-    );
-  }, [navigateToNode, setNodes]);
 
   return (
     <div className="w-full h-screen">
