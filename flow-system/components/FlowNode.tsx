@@ -23,15 +23,54 @@ const FlowNode = memo(({ data, selected }: FlowNodeProps) => {
   const hasDownstream = flowNode.connections.downstream.length > 0;
   const hasCrossflow = flowNode.connections.crossflow.length > 0;
 
+  // 呼吸动画配置（基于层级）
+  const breathingDuration = 3 + flowNode.layer * 0.5;
+
   return (
-    <motion.div
-      style={style}
-      className={`flow-node relative ${selected ? 'ring-2 ring-flow-secondary' : ''}`}
-      initial={{ scale: 0.8, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
-      transition={{ duration: 0.3 }}
-      whileHover={{ scale: 1.05 }}
-    >
+    <div className="relative">
+      {/* Hover涟漪效果 */}
+      <motion.div
+        className="absolute inset-0 rounded-full border-2 border-flow-secondary"
+        initial={{ scale: 1, opacity: 0 }}
+        whileHover={{
+          scale: 1.5,
+          opacity: [0, 0.5, 0],
+        }}
+        transition={{
+          duration: 1,
+          repeat: Infinity,
+        }}
+        style={{ pointerEvents: 'none' }}
+      />
+
+      {/* 节点本体 */}
+      <motion.div
+        style={style}
+        className={`flow-node relative overflow-visible ${selected ? 'ring-2 ring-flow-secondary' : ''}`}
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{
+          scale: 1,
+          opacity: 1,
+          boxShadow: [
+            style.boxShadow,
+            style.boxShadow?.replace(/0\.\d+/, (m) => String(parseFloat(m) * 1.5)),
+            style.boxShadow,
+          ],
+        }}
+        transition={{
+          scale: { duration: 0.3 },
+          opacity: { duration: 0.3 },
+          boxShadow: {
+            duration: breathingDuration,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          },
+        }}
+        whileHover={{
+          scale: 1.08,
+          transition: { duration: 0.2 },
+        }}
+      >
       {/* 上游连接点 */}
       {hasUpstream && (
         <Handle type="target" position={Position.Top} />
@@ -145,11 +184,12 @@ const FlowNode = memo(({ data, selected }: FlowNodeProps) => {
         </AnimatePresence>
       </div>
 
-      {/* 下游连接点 */}
-      {hasDownstream && (
-        <Handle type="source" position={Position.Bottom} />
-      )}
-    </motion.div>
+        {/* 下游连接点 */}
+        {hasDownstream && (
+          <Handle type="source" position={Position.Bottom} />
+        )}
+      </motion.div>
+    </div>
   );
 });
 
